@@ -17,11 +17,16 @@ export default defineConfig({
       // entry: path.resolve(__dirname, "src/PlayerList.svelte"),
       entry: "src/PlayerList.svelte",
       name: "PlayerList",
+      formats: ["umd"],
+      fileName: "player-list",
     },
-    // rollupOptions: {
-    //   // make sure to externalize deps that shouldn't be bundled
-    //   // into your library
-    //   external: ["svelte"],
-    // },
+    rollupOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name === "style.css") return "player-list.css";
+          return assetInfo.name;
+        },
+      },
+    },
   },
 });

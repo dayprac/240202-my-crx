@@ -14,16 +14,21 @@ export default defineConfig({
     exclude: ["/app.css$/"],
   },
   build: {
+    outDir: "dist-options",
     lib: {
       // entry: path.resolve(__dirname, "src/PlayerList.svelte"),
       entry: "src/ListOnOptions.svelte",
       name: "ListOnOptions",
+      formats: ["umd"],
       fileName: "svelte-options",
     },
-    // rollupOptions: {
-    //   // make sure to externalize deps that shouldn't be bundled
-    //   // into your library
-    //   external: ["svelte"],
-    // },
+    rollupOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name === "style.css") return "svelte-options.css";
+          return assetInfo.name;
+        },
+      },
+    },
   },
 });
