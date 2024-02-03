@@ -59,6 +59,30 @@ $(function () {
       injectPlaylist($(this).parents(".style-scope.ytd-player"));
     });
   }, 3000);
+  //百度网盘
+  setTimeout(()=>{
+    console.log('[debug 百度网盘]')
+    // document.querySelectorAll(".vjs-tech") // 发现有两个
+    $(".vp-video__player").each(function(){
+      injectPlaylist($(this).parents("section"))
+    })
+    // $(".vp-vip-pri").append('<input type="text">').on("keydown", function(e) {
+    //   console.log('[debug keydown]', e)
+    //   e.stopPropagation();
+    // })
+    $(".bg-purple-200").on("keydown", function(e) {
+      e.stopPropagation();
+    })
+    $(".bg-purple-200").on("keyup", function(e) {
+      e.stopPropagation();
+    })
+  }, 3000)
+  // x18r
+  setTimeout(() => {
+    $("#wrap-slider video").each(function () {
+      injectPlaylist($(this).parents("#wrap-slider"));
+    });
+  }, 6000);
 });
 
 function injectPlaylist(wrapper) {
