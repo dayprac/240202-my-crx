@@ -4,5 +4,16 @@
   "description": "这是一段描述",
   "version": "1.0",
   "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "dist/player-list.umd.cjs",
+        "js/jquery-3.1.0.min.js",
+        "content.js"
+      ],
+      "css": ["dist/player-list.css"]
+    }
+  ],
   "permissions": ["storage"]
 }
