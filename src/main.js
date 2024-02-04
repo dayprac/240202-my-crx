@@ -1,4 +1,4 @@
-import PlayerListApp from "./PlayerList.svelte";
+import PlayerList from "./PlayerList.svelte";
 import $ from "jquery";
 import Hls from "hls.js";
 
@@ -104,47 +104,115 @@ async function setData(data) {
 }
 //#endregion
 
-let videoRegion = null;
-let container = null;
+$("video").each((_, ele) => {
+  // console.log(ele);
+  let video = ele;
+  if (Hls.isSupported()) {
+    var hls = new Hls();
+    // hls.loadSource("http://192.168.0.3:8106/hls/lucene.m3u8");
+    hls.loadSource("http://127.0.0.1:8106/hls/lucene.m3u8");
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+      video.muted = true;
+      video.play();
+    });
+  }
+});
 
-var video = document.getElementById("video");
-if (Hls.isSupported()) {
-  var hls = new Hls();
-  // hls.loadSource("http://192.168.0.3:8106/hls/lucene.m3u8");
-  hls.loadSource("http://127.0.0.1:8106/hls/lucene.m3u8");
-  hls.attachMedia(video);
-  hls.on(Hls.Events.MEDIA_ATTACHED, function () {
-    video.muted = true;
-    video.play();
+// todo div定位过程 移植到content.js中不顺
+$("video").each(function () {
+  let $divParents = $(this).parents();
+  console.log($divParents); // 所有祖先中是div的节点
+  // let div = $($div[0]);
+  // injectPlaylist($($div[0]));
+  let videoWidth = $(this).width();
+  let videoHeight = $(this).height();
+  console.log("[debug videoWidth videoHeight]", videoWidth, videoHeight);
+  let infos = [];
+  for (let i = 0; i < $divParents.length; i++) {
+    let $div = $($divParents[i]);
+    infos.push({
+      index: i,
+      width: $div.width(),
+      height: $div.height(),
+      $ele: $div,
+    });
+  }
+  console.log("[debug infos before filter]", infos);
+  infos = infos.filter((i) => {
+    if (
+      i.width >= videoWidth &&
+      i.width <= videoWidth * 1.3
+      // i.height >= videoHeight &&
+      // i.height <= videoHeight * 1.3
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+  console.log("[debug infos after filter]", infos);
+  if (infos.length > 0) {
+    injectPlaylist(infos[infos.length - 1].$ele);
+  }
+});
+
+function injectPlaylist($div) {
+  console.log("[debug injectPlaylist", $div);
+  $div.css({ position: "relative" });
+  let container = $(`
+    <div class="qzq-playlist-container">
+      <div class="ball"></div>
+      <div class="wrapper"></div>
+    </div>
+  `);
+  // $div.after(container);
+  $div.append(container);
+  container.css({
+    position: "absolute",
+    top: 0,
+    left: "100%",
+    display: "flex",
+    zIndex: 999,
+  });
+
+  container.find(".ball").css({
+    position: "absolute",
+    width: "40px",
+    height: "40px",
+    left: "-40px",
+    backgroundColor: "skyblue",
+    cursor: "pointer",
+  });
+  // container.find(".wrapper").css({
+  //   position: "absolute",
+  //   top: 0,
+  //   left: "40px",
+  // });
+  // $("<span><span>").insertAfter($(this)).append(container);
+  // $("<span>Hi<span>").insertAfter($(this));
+
+  // container.fadeOut("slow");
+  container.find(".ball").animate({ opacity: "0" }, 4000);
+
+  container.find(".ball").hover(
+    function () {
+      container.find(".ball").animate({ opacity: "1" }, 200);
+    },
+    function () {
+      container.find(".ball").animate({ opacity: "0" }, 200);
+    }
+  );
+
+  const app = new PlayerList({
+    target: container.find(".wrapper")[0],
+    props: {
+      video: $div.find("video")[0],
+      getData,
+      setData,
+    },
+  });
+  container.find(".ball").on("click", function () {
+    container.find(".wrapper").toggle();
   });
 }
-
-videoRegion = $(".pb-3.pb-e-lg-30");
-container = $(`
-      <div class="qzq-playlist-container">
-        <div>Container</div>
-      </div>
-    `);
-console.log(videoRegion.css("width"));
-container.css({
-  position: "absolute",
-  top: 0,
-  // right: "-1" + container.css("width"),
-  left: parseInt(videoRegion.css("width").replace("px", "")) + 15 + "px",
-  // left: "-" + wrapper.css("width"),
-  // right: 0,
-  zIndex: 999,
-});
-videoRegion.append(container);
-container.empty();
-
-const app = new PlayerListApp({
-  target: container[0],
-  props: {
-    video: videoRegion.find("video")[0],
-    getData,
-    setData,
-  },
-});
-
-export default app;

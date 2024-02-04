@@ -6,14 +6,24 @@
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vite + Svelte</title>
+  <style>
+    .div1 {
+      display: flex;
+    }
+  </style>
 </head>
 
 <body>
   <div id="app">
-    <div class="pb-3 pb-e-lg-30" style="width: 500px">
+    <div class="div1">
       <div>
-        <video id="video" style="width:500px" controls></video>
+        <video style="width:500px" controls></video>
       </div>
+      <div style="width:500px;height:500px;background-color:pink;">
+      </div>
+    </div>
+    <div style="margin-top: 5px">
+      <video style="width:400px" controls></video>
     </div>
   </div>
   <script type="module" src="/src/main.js"></script>

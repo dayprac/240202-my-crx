@@ -60,23 +60,23 @@ $(function () {
     });
   }, 3000);
   //百度网盘
-  setTimeout(()=>{
-    console.log('[debug 百度网盘]')
+  setTimeout(() => {
+    console.log("[debug 百度网盘]");
     // document.querySelectorAll(".vjs-tech") // 发现有两个
-    $(".vp-video__player").each(function(){
-      injectPlaylist($(this).parents("section"))
-    })
+    $(".vp-video__player").each(function () {
+      injectPlaylist($(this).parents("section"));
+    });
     // $(".vp-vip-pri").append('<input type="text">').on("keydown", function(e) {
     //   console.log('[debug keydown]', e)
     //   e.stopPropagation();
     // })
-    $(".bg-purple-200").on("keydown", function(e) {
+    $(".bg-purple-200").on("keydown", function (e) {
       e.stopPropagation();
-    })
-    $(".bg-purple-200").on("keyup", function(e) {
+    });
+    $(".bg-purple-200").on("keyup", function (e) {
       e.stopPropagation();
-    })
-  }, 3000)
+    });
+  }, 3000);
   // x18r
   setTimeout(() => {
     $("#wrap-slider video").each(function () {
@@ -85,26 +85,63 @@ $(function () {
   }, 6000);
 });
 
-function injectPlaylist(wrapper) {
-  let container = $(`<div></div>`);
+function injectPlaylist($div) {
+  console.log("[debug injectPlaylist", $div);
+  // $div.css({ position: "relative" });
+  let container = $(`
+    <div class="qzq-playlist-container">
+      <div class="ball"></div>
+      <div class="wrapper"></div>
+    </div>
+  `);
+  // $div.after(container);
+  $div.append(container);
   container.css({
     position: "absolute",
     top: 0,
-    // right: "-1" + container.css("width"),
-    left: wrapper.css("width"),
-    // left: "-" + wrapper.css("width"),
-    // right: 0,
+    left: "100%",
+    // left: 0,
+    display: "flex",
     zIndex: 999,
   });
-  wrapper.append(container);
-  // initPlaylist(container, wrapper);
-  container.empty();
-  new PlayerList({
-    target: container[0],
+
+  container.find(".ball").css({
+    position: "absolute",
+    width: "40px",
+    height: "40px",
+    left: "-40px",
+    backgroundColor: "skyblue",
+    cursor: "pointer",
+  });
+  // container.find(".wrapper").css({
+  //   position: "absolute",
+  //   top: 0,
+  //   left: "40px",
+  // });
+  // $("<span><span>").insertAfter($(this)).append(container);
+  // $("<span>Hi<span>").insertAfter($(this));
+
+  // container.fadeOut("slow");
+  container.find(".ball").animate({ opacity: "0" }, 4000);
+
+  container.find(".ball").hover(
+    function () {
+      container.find(".ball").animate({ opacity: "1" }, 200);
+    },
+    function () {
+      container.find(".ball").animate({ opacity: "0" }, 200);
+    }
+  );
+
+  const app = new PlayerList({
+    target: container.find(".wrapper")[0],
     props: {
-      video: wrapper.find("video")[0],
+      video: $div.find("video")[0],
       getData,
       setData,
     },
+  });
+  container.find(".ball").on("click", function () {
+    container.find(".wrapper").toggle();
   });
 }
