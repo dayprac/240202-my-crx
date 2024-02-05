@@ -35,54 +35,79 @@ function setData(data) {
 //#endregion
 
 $(function () {
-  $(".pb-3.pb-e-lg-30 video").each(function () {
-    console.log("[.plyr video]");
-    // let jqVideo = $(".plyr video");
-    // let video = jqVideo[0];
-    // if (Hls.isSupported()) {
-    //   var hls = new Hls();
-    //   hls.loadSource(jqVideo.attr("m3u8"));
-    //   hls.attachMedia(video);
-    //   hls.on(Hls.Events.MANIFEST_PARSED, function () {
-    //     video.play();
-    //   });
-    // }
-    // const player = new Plyr(video);
-    // console.log(player)
+  let url = window.location.href;
+  if (url.includes("jable")) {
+    // jable
+    $(".pb-3.pb-e-lg-30").each(function () {
+      injectPlaylist($(this));
+    });
+  } else if (url.includes("youtube")) {
+    // youtube
+    setTimeout(() => {
+      $(".style-scope.ytd-player").each(function () {
+        injectPlaylist($(this));
+      });
+    }, 3000);
+  } else if (url.includes("pan.baidu")) {
+    //百度网盘
+    setTimeout(() => {
+      $(".vp-video__player").each(function () {
+        injectPlaylist($(this).parents("section"));
+      });
+    }, 3000);
+  } else if (url.includes("x18r")) {
+    // x18r
+    setTimeout(() => {
+      $("#wrap-slider").each(function () {
+        injectPlaylist($(this));
+      });
+    }, 6000);
+  } else {
+    // todo div定位过程 移植到content.js中不顺
+    $("video").each(function () {
+      let $divParents = $(this).parents();
+      console.log($divParents); // 所有祖先中是div的节点
+      // let div = $($div[0]);
+      // injectPlaylist($($div[0]));
+      let videoWidth = $(this).width();
+      let videoHeight = $(this).height();
+      console.log("[debug videoWidth videoHeight]", videoWidth, videoHeight);
+      let infos = [];
+      for (let i = 0; i < $divParents.length; i++) {
+        let $div = $($divParents[i]);
+        infos.push({
+          index: i,
+          width: $div.width(),
+          height: $div.height(),
+          $ele: $div,
+        });
+      }
+      console.log("[debug infos before filter]", infos);
+      infos = infos.filter((i) => {
+        if (
+          i.width >= videoWidth &&
+          i.width <= videoWidth * 1.3
+          // i.height >= videoHeight &&
+          // i.height <= videoHeight * 1.3
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+      console.log("[debug infos after filter]", infos);
+      if (infos.length > 0) {
+        injectPlaylist(infos[infos.length - 1].$ele);
+      }
+    });
+  }
 
-    // jq版本
-    injectPlaylist($(this).parents(".pb-3.pb-e-lg-30"));
+  $(".bg-purple-200").on("keydown", function (e) {
+    e.stopPropagation();
   });
-  // youtube
-  setTimeout(() => {
-    $(".style-scope.ytd-player video").each(function () {
-      injectPlaylist($(this).parents(".style-scope.ytd-player"));
-    });
-  }, 3000);
-  //百度网盘
-  setTimeout(() => {
-    console.log("[debug 百度网盘]");
-    // document.querySelectorAll(".vjs-tech") // 发现有两个
-    $(".vp-video__player").each(function () {
-      injectPlaylist($(this).parents("section"));
-    });
-    // $(".vp-vip-pri").append('<input type="text">').on("keydown", function(e) {
-    //   console.log('[debug keydown]', e)
-    //   e.stopPropagation();
-    // })
-    $(".bg-purple-200").on("keydown", function (e) {
-      e.stopPropagation();
-    });
-    $(".bg-purple-200").on("keyup", function (e) {
-      e.stopPropagation();
-    });
-  }, 3000);
-  // x18r
-  setTimeout(() => {
-    $("#wrap-slider video").each(function () {
-      injectPlaylist($(this).parents("#wrap-slider"));
-    });
-  }, 6000);
+  $(".bg-purple-200").on("keyup", function (e) {
+    e.stopPropagation();
+  });
 });
 
 function injectPlaylist($div) {
