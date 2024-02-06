@@ -71,10 +71,12 @@
 <div>
   {#each videoListData as videoData, index (videoData.id)}
     {#if videoData.url === url}
-      <div>{videoData.title}</div>
+      <div class="video-title">{videoData.title}</div>
     {:else}
       <div>
-        <a href={videoData.url} target="_blank">{videoData.title}</a>
+        <a class="video-title" href={videoData.url} target="_blank"
+          >{videoData.title}</a
+        >
       </div>
     {/if}
     <TimeRangeList {video} {videoData}></TimeRangeList>

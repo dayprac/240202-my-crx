@@ -35,138 +35,131 @@ function setData(data) {
 //#endregion
 
 $(function () {
-  let url = window.location.href;
-  if (url.includes("jable")) {
-    // jable
-    $(".pb-3.pb-e-lg-30").each(function () {
-      injectPlaylist($(this));
-    });
-  } else if (url.includes("youtube")) {
-    // youtube
-    setTimeout(() => {
-      $(".style-scope.ytd-player").each(function () {
-        injectPlaylist($(this));
-      });
-    }, 3000);
-  } else if (url.includes("pan.baidu")) {
-    //百度网盘
-    setTimeout(() => {
-      $(".vp-video__player").each(function () {
-        injectPlaylist($(this).parents("section"));
-      });
-    }, 3000);
-  } else if (url.includes("x18r")) {
-    // x18r
-    setTimeout(() => {
-      $("#wrap-slider").each(function () {
-        injectPlaylist($(this));
-      });
-    }, 6000);
+  let $video = null;
+  //#region 搜索video
+  if (get$Video()) {
+    $video = get$Video();
+    console.log("[debug 搜索video $video]", $video);
+    injectPlaylist($video);
   } else {
-    // todo div定位过程 移植到content.js中不顺
-    $("video").each(function () {
-      let $divParents = $(this).parents();
-      console.log($divParents); // 所有祖先中是div的节点
-      // let div = $($div[0]);
-      // injectPlaylist($($div[0]));
-      let videoWidth = $(this).width();
-      let videoHeight = $(this).height();
-      console.log("[debug videoWidth videoHeight]", videoWidth, videoHeight);
-      let infos = [];
-      for (let i = 0; i < $divParents.length; i++) {
-        let $div = $($divParents[i]);
-        infos.push({
-          index: i,
-          width: $div.width(),
-          height: $div.height(),
-          $ele: $div,
-        });
+    const searchLimit = 30;
+    let searchCount = 0;
+    let timer = setInterval(() => {
+      // console.log("[debug 搜索video searchCount]", searchCount);
+      if (get$Video()) {
+        $video = get$Video();
+        console.log("[debug 搜索video $video]", $video);
+        clearInterval(timer);
+        injectPlaylist($video);
       }
-      console.log("[debug infos before filter]", infos);
-      infos = infos.filter((i) => {
-        if (
-          i.width >= videoWidth &&
-          i.width <= videoWidth * 1.3
-          // i.height >= videoHeight &&
-          // i.height <= videoHeight * 1.3
-        ) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-      console.log("[debug infos after filter]", infos);
-      if (infos.length > 0) {
-        injectPlaylist(infos[infos.length - 1].$ele);
+      searchCount += 1;
+      if (searchCount > searchLimit) {
+        clearInterval(timer);
+        console.log("[debug 放弃搜索video]");
       }
-    });
+    }, 1000);
   }
-
-  $(".bg-purple-200").on("keydown", function (e) {
-    e.stopPropagation();
-  });
-  $(".bg-purple-200").on("keyup", function (e) {
-    e.stopPropagation();
-  });
+  //#endregion 搜索video
 });
 
-function injectPlaylist($div) {
-  console.log("[debug injectPlaylist", $div);
-  // $div.css({ position: "relative" });
+function injectPlaylist($video) {
   let container = $(`
     <div class="qzq-playlist-container">
       <div class="ball"></div>
       <div class="wrapper"></div>
     </div>
   `);
-  // $div.after(container);
-  $div.append(container);
+  $("body").append(container);
   container.css({
     position: "absolute",
-    top: 0,
-    left: "100%",
-    // left: 0,
-    display: "flex",
-    zIndex: 999,
+    top: $video.offset().top,
+    // left: parseInt($video.offset().left + $video.width()) - 40 + "px",
+    left: $video.offset().left + $video.width(),
+    display: "none",
+    zIndex: 999999,
   });
+  container.css({ display: "flex" });
+
+  //#region 设置可拖拽
+  var $dragging = null;
+  $("body")
+    .on("mousedown", ".qzq-playlist-container .ball", function (e) {
+      $(this).attr("unselectable", "on").addClass("draggable");
+      var el_w = $(".draggable").outerWidth(),
+        el_h = $(".draggable").outerHeight();
+      $("body").on("mousemove", function (e) {
+        if ($dragging) {
+          $dragging.offset({
+            top: e.pageY - el_h / 2,
+            left: e.pageX - el_w / 2,
+          });
+        }
+      });
+      // $dragging = $(e.target);
+      $dragging = $(".qzq-playlist-container");
+    })
+    .on("mouseup", ".draggable", function (e) {
+      $dragging = null;
+      $(this).removeAttr("unselectable").removeClass("draggable");
+    });
+  //#endregion 设置可拖拽
 
   container.find(".ball").css({
-    position: "absolute",
     width: "40px",
     height: "40px",
-    left: "-40px",
     backgroundColor: "skyblue",
     cursor: "pointer",
   });
-  // container.find(".wrapper").css({
-  //   position: "absolute",
-  //   top: 0,
-  //   left: "40px",
-  // });
-  // $("<span><span>").insertAfter($(this)).append(container);
-  // $("<span>Hi<span>").insertAfter($(this));
+  // container.find(".ball").animate({ opacity: "0" }, 4000);
 
-  // container.fadeOut("slow");
-  container.find(".ball").animate({ opacity: "0" }, 4000);
+  // container
+  //   .find(".ball")
+  //   .on("mouseenter", function () {
+  //     container.find(".ball").animate({ opacity: "1" }, 200);
+  //   })
+  //   .on("mouseleave", function () {
+  //     container.find(".ball").animate({ opacity: "0" }, 200);
+  //   });
 
-  container.find(".ball").hover(
-    function () {
-      container.find(".ball").animate({ opacity: "1" }, 200);
-    },
-    function () {
-      container.find(".ball").animate({ opacity: "0" }, 200);
-    }
-  );
-
-  const app = new PlayerList({
+  container.find(".wrapper").hide();
+  new PlayerList({
     target: container.find(".wrapper")[0],
     props: {
-      video: $div.find("video")[0],
+      video: $video[0],
       getData,
       setData,
     },
   });
-  container.find(".ball").on("click", function () {
-    container.find(".wrapper").toggle();
+  $(".bg-purple-200").on("keydown", function (e) {
+    e.stopPropagation();
   });
+  $(".bg-purple-200").on("keyup", function (e) {
+    e.stopPropagation();
+  });
+  // 读数据然后显示出来要一段时间
+  setTimeout(() => {
+    // console.log(container.find("a").length);
+    container.find(".ball").text(container.find(".video-title").length);
+    if (container.find(".video-title").length > 0) {
+      container.find(".wrapper").show();
+    }
+  }, 500);
+
+  container.find(".ball").on("mousedown", function () {
+    setTimeout(() => {
+      if (!$dragging) {
+        container.find(".wrapper").toggle();
+      }
+    }, 200);
+  });
+}
+
+function get$Video() {
+  let $videos = $("video"); // 没有时是null
+  // console.log("[debug get$Video]", $videos);
+  if ($videos === null || $videos === undefined || $videos.length === 0) {
+    return null;
+  } else {
+    return $($("video")[0]);
+  }
 }

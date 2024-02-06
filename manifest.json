@@ -9,7 +9,7 @@
       "matches": ["<all_urls>"],
       "js": [
         "dist/player-list.umd.cjs",
-        "js/jquery-3.1.0.min.js",
+        "js/jquery-3.7.1.min.js",
         "content.js"
       ],
       "css": ["dist/player-list.css"]
