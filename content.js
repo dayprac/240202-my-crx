@@ -76,6 +76,7 @@ function injectPlaylist($video) {
     // left: parseInt($video.offset().left + $video.width()) - 40 + "px",
     left: $video.offset().left + $video.width(),
     display: "none",
+    color: "black",
     zIndex: 999999,
   });
   container.css({ display: "flex" });
