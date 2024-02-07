@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "jquery": "^3.7.1",
-    "svelte-jsoneditor": "^0.21.2"
+    "svelte-jsoneditor": "^0.21.2",
+    "tailwindcss-scoped-preflight": "^2.1.0"
   }
 }
