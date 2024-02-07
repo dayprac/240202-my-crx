@@ -9,12 +9,12 @@ export default {
   plugins: [
     // ... other plugins
     scopedPreflightStyles({
-      cssSelector: ".qzq-playlist-container", // or .tailwind-preflight or even [data-twp=true] - any valid CSS selector of your choice
+      cssSelector: ".qzqroot", // or .tailwind-preflight or even [data-twp=true] - any valid CSS selector of your choice
       mode: "matched only", // it's the default
     }),
   ],
   // corePlugins: {
   //   preflight: false,
   // },
-  important: ".qzq-playlist-container",
+  important: ".qzqroot",
 };

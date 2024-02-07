@@ -64,7 +64,7 @@ $(function () {
 
 function injectPlaylist($video) {
   let container = $(`
-    <div class="qzq-playlist-container">
+    <div class="qzqroot">
       <div class="ball"></div>
       <div class="wrapper"></div>
     </div>
@@ -84,7 +84,7 @@ function injectPlaylist($video) {
   //#region 设置可拖拽
   var $dragging = null;
   $("body")
-    .on("mousedown", ".qzq-playlist-container .ball", function (e) {
+    .on("mousedown", ".qzqroot .ball", function (e) {
       $(this).attr("unselectable", "on").addClass("draggable");
       var el_w = $(".draggable").outerWidth(),
         el_h = $(".draggable").outerHeight();
@@ -97,7 +97,7 @@ function injectPlaylist($video) {
         }
       });
       // $dragging = $(e.target);
-      $dragging = $(".qzq-playlist-container");
+      $dragging = $(".qzqroot");
     })
     .on("mouseup", ".draggable", function (e) {
       $dragging = null;
