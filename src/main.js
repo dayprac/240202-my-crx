@@ -336,11 +336,27 @@ function injectPlaylist($video) {
 }
 
 function get$Video() {
+  function hasVideo($ele) {
+    if ($ele === null || $ele === undefined || $ele.length === 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
   let $videos = $("video"); // 没有时是null
   // console.log("[debug get$Video]", $videos);
-  if ($videos === null || $videos === undefined || $videos.length === 0) {
+  if (hasVideo($videos)) {
     return null;
   } else {
-    return $($("video")[0]);
+    let url = window.location.href;
+    if (url.indexOf("pan.baidu") >= 0) {
+      if (hasVideo($("video.vjs-tech"))) {
+        return $($("video.vjs-tech")[0]);
+      } else {
+        return null;
+      }
+    } else {
+      return $($("video")[0]);
+    }
   }
 }
