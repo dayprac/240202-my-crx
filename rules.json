@@ -6,7 +6,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "google.com",
+      "urlFilter": "zhihu.com",
       "resourceTypes": ["main_frame"]
     }
   },
@@ -17,7 +17,7 @@
       "type": "allow"
     },
     "condition": {
-      "urlFilter": "google.com/123",
+      "urlFilter": "zhihu.com/123",
       "resourceTypes": ["main_frame"]
     }
   },
@@ -28,7 +28,7 @@
       "type": "block"
     },
     "condition": {
-      "urlFilter": "google.com/12345",
+      "urlFilter": "zhihu.com/12345",
       "resourceTypes": ["main_frame"]
     }
   },
@@ -42,7 +42,7 @@
       }
     },
     "condition": {
-      "urlFilter": "google.com",
+      "urlFilter": "zhihu.com",
       "resourceTypes": ["main_frame"]
     }
   },
