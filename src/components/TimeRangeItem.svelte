@@ -17,7 +17,7 @@
 </script>
 
 {#if !editFlag}
-  <div class="text-xs">
+  <div>
     <div class="flex items-center">
       <button
         class="mr-1"

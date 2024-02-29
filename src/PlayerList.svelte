@@ -43,7 +43,7 @@
   });
 </script>
 
-<div class="bg-purple-200">
+<div class="bg-purple-200" style="font-size: 12px; color: black">
   <div style="width:300px;">List v{version}</div>
   <div>
     <button on:click={refreshData}>刷新数据</button>

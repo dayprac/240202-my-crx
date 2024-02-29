@@ -100,7 +100,7 @@
   <Filter />
 </div>
 
-<div class="bg-purple-200">
+<div class="bg-purple-200" style="font-size: 12px; color: black">
   {#if loading}
     <div>loading</div>
   {:else}
