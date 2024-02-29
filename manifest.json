@@ -15,6 +15,9 @@
       "css": ["dist/player-list.css"]
     }
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "declarative_net_request": {
     "rule_resources": [
       {
